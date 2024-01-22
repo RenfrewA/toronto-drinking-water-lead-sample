@@ -2,7 +2,7 @@
 # Purpose: Downloads and saves the data from Open Data Toronto (open.toronto.ca)
 # Author: Renfrew Ao-Ieong
 # Date: 21 January 2024
-# Contact: renfrew.aoieong@utoronto.ca
+# Contact: renfrew.aoieong@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: None
 
