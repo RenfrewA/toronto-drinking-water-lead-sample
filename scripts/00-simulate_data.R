@@ -9,8 +9,6 @@
 
 
 #### Workspace setup ####
-install.packages("tidyverse")
-install.packages("knitr")
 library(tidyverse)
 library(knitr)
 
