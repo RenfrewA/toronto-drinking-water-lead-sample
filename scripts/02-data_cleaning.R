@@ -27,4 +27,4 @@ lead_sample_clean <-
   select(sample_number, sample_date, lead_amount_ppm)
 
 #### Save data ####
-write_csv(lead_sample_clean, "inputs/data/cleaned_toronto_water_lead_sample.csv")
+write_csv(lead_sample_clean, "outputs/data/cleaned_toronto_water_lead_sample.csv")

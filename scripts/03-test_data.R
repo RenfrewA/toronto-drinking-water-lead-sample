@@ -1,11 +1,10 @@
 #### Preamble ####
-# Purpose: Simulates the Toronto Non Regulated Lead Sample data set
+# Purpose: Tests the cleaned Toronto Non Regulated Lead Sample data set
 # Author: Renfrew Ao-Ieong
-# Date: 21 January 2024
+# Date: 22 January 2024
 # Contact: renfrew.aoieong@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: none
-# Data set simulated: https://open.toronto.ca/dataset/non-regulated-lead-sample/
 
 
 #### Workspace setup ####
@@ -15,7 +14,7 @@ library(knitr)
 #### Test data ####
 
 # Read cleaned dataset
-clean_dataset <- read_csv("inputs/data/cleaned_toronto_water_lead_sample.csv")
+clean_dataset <- read_csv("outputs/data/cleaned_toronto_water_lead_sample.csv")
 
 # Check that the dates are valid
 # Adapted code from https://stackoverflow.com/questions/18178451/is-there-a-way-to-check-if-a-column-is-a-date-in-r

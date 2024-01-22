@@ -1,10 +1,10 @@
 ---
-title: "My title"
+title: "Analysis of Lead Concentration in Toronto's Drinking Water from 2014 to 2024"
 author: "Renfrew Ao-Ieong"
 thanks: "Code and data are available at: https://github.com/RenfrewA/toronto-drinking-water-lead-sample"
 date: "January 22, 2024"
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "The consumption of lead is known to have numerous negative effects on human health. Residents of Toronto are able to provide drinking water samples to Toronto Public Health to test for the amount of lead it contains. We found that the median amount of lead in Toronto's drinking water has decreased over the past 11 years. This shows good progress towards eliminating lead from our drinking water entirely."
 format: pdf
 toc: true
 number-sections: true
@@ -18,14 +18,15 @@ bibliography: references.bib
 #### Workspace set-up ####
 
 ## Load packages
-library(tidyverse) # a collection of data-related packages
-library(knitr) # for kable
+library(tidyverse)
+library(knitr)
 library(here)
+library(ggplot2)
 
 #### Read in cleaned data ####
 
 cleaned_lead_sample_data = read_csv(
-  file = here("inputs/data/cleaned_toronto_water_lead_sample.csv"),
+  file = here("outputs/data/cleaned_toronto_water_lead_sample.csv"),
   show_col_types = FALSE
 )
 ```
@@ -36,11 +37,13 @@ Lead is a naturally occurring toxic metal that can be harmful to human health. I
 
 Lead can make its way into drinking water when plumbing materials such as pipes, faucets, and fixtures containing lead corrode. In Canada, homes built prior to the 1990s are at risk of using materials containing lead. [@leadHealthCanada] In 2019, Health Canada reduced the Maximum Allowable Concentration (MAC) for lead in drinking water from 10 µg/L to 5 µg/L or 0.01 ppm and 0.005 ppm respectively. [@leadNCCEH] This paper will use parts per million (ppm) as the unit of measuring lead concentration in drinking water. 
 
-We examined the dataset containing results from testing water samples obtained by residents of Toronto to see if there was a decrease in the lead concentration in drinking water from 2014 to present. Write about results here
+We examined the dataset containing results from testing water samples obtained by residents of Toronto to see if there was a decrease in the lead concentration in drinking water from 2014 to present. We found that there was a decrease in the median lead concentration in Toronto's drinking water since 2014.
+
+The data section will discuss the process of retrieving, summarizing, and finding meaning from the data. The specifics of how the data was cleaned is included in the Appendix.
 
 ## Data
 
-The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. Table 1 below shows a sample of the cleaned dataset.
+The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. The dataset consisted of 12811 individual water samples. Table 1 below shows a sample of the cleaned dataset.
 
 ```{r}
 #| echo: false
@@ -56,5 +59,78 @@ head(cleaned_lead_sample_data, 5) |>
     booktabs = TRUE
   )
 ```
+### Drinking Water Samples
+
+Each sample has a `Sample ID`, `Date` which it was obtained, and `Lead Amount (ppm)` which is the concentration of lead in that water sample in parts per million (ppm). We are interested in the trend of the lead concentration in relation to the year. We have two tables shown below. Table 2 is the mean lead concentration by year while Table 3 is the median lead concentration by year. We obtained the following tables by using the `mutate` function [@rDplyr] to change the dates to just their year. Then, we used the `summarise` function [@rDplyr] to obtain 11 rows, each row being a year and the mean or median lead concentration for that year.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: table_yearly_mean_lead_ppm
+#| tbl-cap: Mean lead concentration of water samples by year
+
+cleaned_lead_sample_data |>
+  mutate(sample_year = year(sample_date)) |>
+  arrange(year(sample_date)) |> 
+  summarise(mean_lead_amount = mean(lead_amount_ppm),
+            .by = sample_year) |>
+  kable(
+    col.names = c("Year", "Lead Amount (ppm)"),
+    align='lc',
+    booktabs = TRUE
+  )
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| label: table_yearly_median_lead_ppm
+#| tbl-cap: Median lead concentration of water samples by year
+
+cleaned_lead_sample_data |>
+  mutate(sample_year = year(sample_date)) |>
+  arrange(year(sample_date)) |> 
+  summarise(median_lead_amount = median(lead_amount_ppm),
+            .by = sample_year) |>
+  kable(
+    col.names = c("Year", "Lead Amount (ppm)"),
+    align='lc',
+    booktabs = TRUE
+  )
+```
+### Mean vs. Median Lead Concentration by Year
+
+Table 2 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005 ppm. Table 3 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is. Plotting Table 3 using `ggplot2` [@rGgplot2] we can see that there has been a decreasing trend in the median concentration of lead in drinking water since 2014.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: graph_median_lead_concentration_by_year
+#| tbl-cap: Median lead concentration of water samples by year
+
+cleaned_lead_sample_data |>
+  mutate(sample_year = year(sample_date)) |>
+  arrange(year(sample_date)) |> 
+  summarise(median_lead_amount = median(lead_amount_ppm),
+            .by = sample_year) |>
+  ggplot(aes(x = sample_year, y = median_lead_amount)) +
+  ggtitle("Median Lead Amount in Toronto's Drinking Water by Year") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(x = "Year", y = "Lead Amount (ppm)") +
+  scale_x_continuous(breaks=seq(2014,2024,1)) +
+  scale_color_brewer(palette = "Set1")
+```
+
+### Limitations
+
+Some limitations to this study is the fact that the dataset contains voluntary samples submitted by residents of Toronto. This may lead to sampling bias as someone who is living in an older home with a higher possibility of containing lead plubmbing materials may be more likely to test their drinking water. Another issue with voluntary samples is that the sample may be tampered with since there are no checks to verify where the water came from. However, it is not feasible for the city to enter people's homes to accurately test their drinking water so this data is the best we have at the moment.
+
+## Appendix
+
+### Data Cleaning
+
+The steps taken to obtain this cleaned data is as follows. First, we used the function `clean_names` from the `janitor` package [@rJanitor] to give us column names that are unique and only consist of underscores, numbers, and letters. Next, we converted the `lead_amount_ppm` column from `character` type to `numeric` type. However, there were 2995 samples that contained a lead amount of `<0.00005` which can not be converted directly to `numeric` type as it contains the `<` character. Thus, we chose to convert all samples with that amount to `0.00005`. Then, we chose to discard the `x_id` and `partial_postal_code` columns because those will not be used for our purposes.
 
 ## References
