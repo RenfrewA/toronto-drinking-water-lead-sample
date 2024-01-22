@@ -20,10 +20,10 @@ set.seed(158)
 
 # Simulate sample identifier number, date of sample, and amount of lead in water sample
 # Use 1 to 365 to represent the sample id number
-sim_sample_id = seq(1, 365, by=1)
+sim_sample_id <- seq(1, 365, by=1)
 
 # Simulate that a sample was obtained every day of the year
-sim_date = rep(x = as.Date("2023-01-01") + c(0:364))
+sim_date <- rep(x = as.Date("2023-01-01") + c(0:364))
 
 # We don't know much about the actual data, so we estimate it to be from
 # a normal distribution and choose mean to be 0.005 which is the maximum
