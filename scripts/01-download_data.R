@@ -22,7 +22,7 @@ toronto_water_lead_sample <-
   # Developers" tab of the relevant page from Open Data Toronto
   # https://open.toronto.ca/dataset/non-regulated-lead-sample/
   list_package_resources("8171f7ab-364e-46a7-8a62-08f073ca6d96") |>
-  # We want to download the data in csv format
+  # We use filter() to select the file we want in csv format
   filter(name == 
            "Non Regulated Lead Samples.csv") |>
   get_resource()
