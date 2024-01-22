@@ -35,7 +35,7 @@ cleaned_lead_sample_data = read_csv(
 
 Lead is a naturally occurring toxic metal that can be harmful to human health. It can cause neurological, cardiovascular, renal, immunological, reproductive and developmental effects, including developmental neurotoxicity in children. [@leadNCCEH] According to the National Collaborating Centre for Environmental Health (NCCEH), since 1970, Canada has phased out use of lead in gasoline, paint, and other products which has significantly reduced the blood lead levels in Canadians. Currently, the main concern of lead exposure is from drinking water. Presence of lead in drinking water is a serious concern to public health and safety which is why proper precautions are needed to ensure safe drinking water.
 
-Lead can make its way into drinking water when plumbing materials such as pipes, faucets, and fixtures containing lead corrode. In Canada, homes built prior to the 1990s are at risk of using materials containing lead. [@leadHealthCanada] In 2019, Health Canada reduced the Maximum Allowable Concentration (MAC) for lead in drinking water from 10 µg/L to 5 µg/L or 0.01 ppm and 0.005 ppm respectively. [@leadNCCEH] This paper will use parts per million (ppm) as the unit of measuring lead concentration in drinking water. 
+Lead can make its way into drinking water when plumbing materials such as pipes, faucets, and fixtures containing lead corrode. In Canada, homes built prior to the 1990s are at risk of using materials containing lead. [@leadHealthCanada] In 2019, Health Canada reduced the Maximum Allowable Concentration (MAC) for lead in drinking water from 10 µg/L to 5 µg/L or 0.01 ppm and 0.005 ppm respectively. [@leadNCCEH] This paper will use parts per million (ppm) as the unit of measuring lead concentration in drinking water.
 
 We examined the dataset containing results from testing water samples obtained by residents of Toronto to see if there was a decrease in the lead concentration in drinking water from 2014 to present. We found that there was a decrease in the median lead concentration in Toronto's drinking water since 2014.
 
@@ -44,6 +44,8 @@ The data section will discuss the process of retrieving, summarizing, and findin
 ## Data
 
 The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. The dataset consisted of 12811 individual water samples. Table 1 below shows a sample of the cleaned dataset.
+
+The amount of lead present in water is measured in parts per million (ppm). It is important to note that any higher than 0.005 ppm is not acceptable according to Health Canada. [@leadHealthCanada]
 
 ```{r}
 #| echo: false
@@ -100,7 +102,30 @@ cleaned_lead_sample_data |>
 ```
 ### Mean vs. Median Lead Concentration by Year
 
-Table 2 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005 ppm. Table 3 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is. Plotting Table 3 using `ggplot2` [@rGgplot2] we can see that there has been a decreasing trend in the median concentration of lead in drinking water since 2014.
+Plotting the mean and median lead concentration by year using `ggplot2` [@rGgplot2] we can see that there has not been a significant change in the mean concentration of lead in drinking water since 2014. On the other hand there has been a decreasing trend in the median concentration of lead in drinking water since 2014. Figure 1 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005 ppm. Figure 2 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: graph_mean_lead_concentration_by_year
+#| tbl-cap: Mean lead concentration of water samples by year
+
+cleaned_lead_sample_data |>
+  mutate(sample_year = year(sample_date)) |>
+  arrange(year(sample_date)) |> 
+  summarise(mean_lead_amount = mean(lead_amount_ppm),
+            .by = sample_year) |>
+  ggplot(aes(x = sample_year, y = mean_lead_amount)) +
+  ggtitle("Mean Lead Amount in Toronto's Drinking Water by Year") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(x = "Year", y = "Lead Amount (ppm)") +
+  scale_x_continuous(breaks=seq(2014,2024,1)) +
+  scale_color_brewer(palette = "Set1") + 
+  labs(caption = "Figure 1: Mean Lead Amount in Toronto's Drinking Water by Year") +
+  theme(plot.caption = element_text(hjust=0))
+```
 
 ```{r}
 #| echo: false
@@ -120,7 +145,9 @@ cleaned_lead_sample_data |>
   theme_minimal() +
   labs(x = "Year", y = "Lead Amount (ppm)") +
   scale_x_continuous(breaks=seq(2014,2024,1)) +
-  scale_color_brewer(palette = "Set1")
+  scale_color_brewer(palette = "Set1") +
+  labs(caption = "Figure 2: Median Lead Amount in Toronto's Drinking Water by Year") +
+  theme(plot.caption = element_text(hjust=0))
 ```
 
 ### Limitations
