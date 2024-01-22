@@ -1,18 +1,60 @@
 ---
 title: "My title"
-subtitle: "My subtitle if needed"
-author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
-date: today
+author: "Renfrew Ao-Ieong"
+thanks: "Code and data are available at: https://github.com/RenfrewA/toronto-drinking-water-lead-sample"
+date: "January 22, 2024"
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
+toc: true
 number-sections: true
 bibliography: references.bib
 ---
 
+```{r}
+#| message: false
+#| echo: false
 
+#### Workspace set-up ####
 
+## Load packages
+library(tidyverse) # a collection of data-related packages
+library(knitr) # for kable
+library(here)
 
+#### Read in cleaned data ####
+
+cleaned_lead_sample_data = read_csv(
+  file = here("inputs/data/cleaned_toronto_water_lead_sample.csv"),
+  show_col_types = FALSE
+)
+```
+
+## Introduction
+
+Lead is a naturally occurring toxic metal that can be harmful to human health. It can cause neurological, cardiovascular, renal, immunological, reproductive and developmental effects, including developmental neurotoxicity in children. [@leadNCCEH] According to the National Collaborating Centre for Environmental Health (NCCEH), since 1970, Canada has phased out use of lead in gasoline, paint, and other products which has significantly reduced the blood lead levels in Canadians. Currently, the main concern of lead exposure is from drinking water. Presence of lead in drinking water is a serious concern to public health and safety which is why proper precautions are needed to ensure safe drinking water.
+
+Lead can make its way into drinking water when plumbing materials such as pipes, faucets, and fixtures containing lead corrode. In Canada, homes built prior to the 1990s are at risk of using materials containing lead. [@leadHealthCanada] In 2019, Health Canada reduced the Maximum Allowable Concentration (MAC) for lead in drinking water from 10 µg/L to 5 µg/L or 0.01 ppm and 0.005 ppm respectively. [@leadNCCEH] This paper will use parts per million (ppm) as the unit of measuring lead concentration in drinking water. 
+
+We examined the dataset containing results from testing water samples obtained by residents of Toronto to see if there was a decrease in the lead concentration in drinking water from 2014 to present. Write about results here
+
+## Data
+
+The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. Table 1 below shows a sample of the cleaned dataset.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: table_cleaned_data
+#| tbl-cap: Sample of cleaned lead concentration data
+
+head(cleaned_lead_sample_data, 5) |>
+  mutate(lead_amount_ppm = format(lead_amount_ppm, scientific = F)) |>
+  kable(
+    col.names = c("Sample ID", "Date", "Lead Amount (ppm)"),
+    align='llc',
+    booktabs = TRUE
+  )
+```
+
+## References

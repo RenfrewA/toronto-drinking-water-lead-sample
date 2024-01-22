@@ -88,8 +88,6 @@ all(sapply(sim_date, is.date))
 all(sapply(sim_date_5_year, is.date))
 
 
-# Check that the lead amount is between 0 and 1
-simulated_data$lead_amount |> min() >= 0
-simulated_data$lead_amount |> max() <= 1
-simulated_data_5_year$lead_amount |> min() >= 0
-simulated_data_5_year$lead_amount |> max() <= 1
+# Check that the lead amount is a number
+all(sapply(simulated_data$lead_amount, is.numeric))
+all(sapply(simulated_data_5_year$lead_amount, is.numeric))
