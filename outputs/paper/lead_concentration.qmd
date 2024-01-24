@@ -63,7 +63,7 @@ head(cleaned_lead_sample_data, 5) |>
 ```
 ### Drinking Water Samples
 
-Each sample has a `Sample ID`, `Date` which it was obtained, and `Lead Amount (ppm)` which is the concentration of lead in that water sample in parts per million (ppm). We are interested in the trend of the lead concentration in relation to the year. We have two tables shown below. Table 2 is the mean lead concentration by year while Table 3 is the median lead concentration by year. We obtained the following tables by using the `mutate` function [@rDplyr] to change the dates to just their year. Then, we used the `summarise` function [@rDplyr] to obtain 11 rows, each row being a year and the mean or median lead concentration for that year.
+Each sample has a `Sample ID`, `Date` which it was obtained, and `Lead Amount (ppm)` which is the concentration of lead in that water sample in parts per million (ppm). We are interested in the trend of the lead concentration in relation to the year. We have two tables shown below. Table 2 is the mean lead concentration by year while Table 3 is the median lead concentration by year. We partitioned all the water samples by the year it was obtained and calculated the mean and median value of the lead amount. 
 
 ```{r}
 #| echo: false
@@ -102,7 +102,7 @@ cleaned_lead_sample_data |>
 ```
 ### Mean vs. Median Lead Concentration by Year
 
-Plotting the mean and median lead concentration by year using `ggplot2` [@rGgplot2] we can see that there has not been a significant change in the mean concentration of lead in drinking water since 2014. On the other hand there has been a decreasing trend in the median concentration of lead in drinking water since 2014. Figure 1 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005 ppm. Figure 2 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is.
+Plotting the mean and median lead concentration by year, we can see that there has not been a significant change in the mean concentration of lead in drinking water since 2014. On the other hand there has been a decreasing trend in the median concentration of lead in drinking water since 2014. Figure 1 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005. Figure 2 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is.
 
 ```{r}
 #| echo: false
@@ -150,9 +150,18 @@ cleaned_lead_sample_data |>
   theme(plot.caption = element_text(hjust=0))
 ```
 
-### Limitations
+### City of Toronto Corrosion Control Program
 
-Some limitations to this study is the fact that the dataset contains voluntary samples submitted by residents of Toronto. This may lead to sampling bias as someone who is living in an older home with a higher possibility of containing lead plubmbing materials may be more likely to test their drinking water. Another issue with voluntary samples is that the sample may be tampered with since there are no checks to verify where the water came from. However, it is not feasible for the city to enter people's homes to accurately test their drinking water so this data is the best we have at the moment.
+To prevent the contamination of lead into tap water due to corrosion, the City of Toronto implemented the Corrosion Control Program which aimed to prevent corrosion of pipes and plumbing fixtures by adding phosphate to the drinking water treatment process. [@torontoLeadReport] This took effect in 2014 and Toronto Water estimated that it would take up to 2 years for a protective coating to form inside all pipes. As we can see from Figure 2, the data does not seem to show a decline from the year 2014 to 2015. However, from 2015 to 2016 the median lead concentration decreased from 0.0003255 to 0.0001980 ppm which aligns with the 2 year period in which the phosphate protective coating needed to form. Since then, the median lead amount of a particular year never reached as high as 2014 levels. From the data, there is evidence to support the fact that the implementation of the Corrosion Control Program had a noticeable impact on the water quality in Toronto.
+
+### Regulated vs. Non Regulated Testing
+
+It is important to note that the water samples in this dataset was collected from a non-regulated program. This means that the samples were voluntarily submitted by residents of Toronto. This may lead to sampling bias as someone who is living in an older home with a higher possibility of containing lead plubmbing materials may be more likely to test their drinking water. Another issue with voluntary samples is that the sample may be tampered with since there are no checks to verify where the water came from.
+
+The City of Toronto currently collects and analyzes water samples as a part of the Corrosion Control Program. [@torontoLeadTesting] This regulated testing program requires taking samples throughout the year from at least 55 residential and non-residential tap locations as well as 10 distribution system locations. In 2022, the maximum measurement for residential and non-residential locations was 0.00386 ppm, the minimum was less than 0.00005 ppm, and the average was 0.0005 ppm. This was a decrease compared to 2017 where they measured a maximum of 0.0732 ppm, minimum of less than 0.00005 ppm, and an average of 0.0028 ppm. Prior to the Corrosion Control Program, samples taken from 2007-2008 recorded a maximum of 0.014 ppm, minimum of less than 0.00051 ppm and an average of 0.0038 ppm.
+
+In both regulated and non regulated testing, the data shows an improvement in water quality when compared to the past results. 
+
 
 ## References
 
