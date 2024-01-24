@@ -4,7 +4,7 @@ author: "Renfrew Ao-Ieong"
 thanks: "Code and data are available at: https://github.com/RenfrewA/toronto-drinking-water-lead-sample"
 date: "January 22, 2024"
 date-format: long
-abstract: "The consumption of lead is known to have numerous negative effects on human health. Residents of Toronto are able to provide drinking water samples to Toronto Public Health to test for the amount of lead it contains. We found that the median amount of lead in Toronto's drinking water has decreased over the past 11 years. This shows good progress towards eliminating lead from our drinking water entirely."
+abstract: "The consumption of lead is known to have numerous negative effects on human health. Residents of Toronto are able to provide drinking water samples to Toronto Public Health to test for the amount of lead it contains. Using the Non Regulated Lead Sample dataset from the City of Toronto's Open Data Portal, we found that the median amount of lead in Toronto's drinking water has decreased over the past 11 years. This shows good progress towards eliminating lead from our drinking water entirely."
 format: pdf
 toc: true
 number-sections: true
@@ -154,10 +154,15 @@ cleaned_lead_sample_data |>
 
 Some limitations to this study is the fact that the dataset contains voluntary samples submitted by residents of Toronto. This may lead to sampling bias as someone who is living in an older home with a higher possibility of containing lead plubmbing materials may be more likely to test their drinking water. Another issue with voluntary samples is that the sample may be tampered with since there are no checks to verify where the water came from. However, it is not feasible for the city to enter people's homes to accurately test their drinking water so this data is the best we have at the moment.
 
+## References
+
+::: {#refs}
+:::
+
+{{< pagebreak >}}
+
 ## Appendix
 
-### Data Cleaning
+### Data Cleaning {.appen}
 
 The steps taken to obtain this cleaned data is as follows. First, we used the function `clean_names` from the `janitor` package [@rJanitor] to give us column names that are unique and only consist of underscores, numbers, and letters. Next, we converted the `lead_amount_ppm` column from `character` type to `numeric` type. However, there were 2995 samples that contained a lead amount of `<0.00005` which can not be converted directly to `numeric` type as it contains the `<` character. Thus, we chose to convert all samples with that amount to `0.00005`. Then, we chose to discard the `x_id` and `partial_postal_code` columns because those will not be used for our purposes.
-
-## References
