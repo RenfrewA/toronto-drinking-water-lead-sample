@@ -5,7 +5,9 @@ thanks: "Code and data are available at: https://github.com/RenfrewA/toronto-dri
 date: "January 22, 2024"
 date-format: long
 abstract: "The consumption of lead is known to have numerous negative effects on human health. Residents of Toronto are able to provide drinking water samples to Toronto Public Health to test for the amount of lead it contains. Using the Non Regulated Lead Sample dataset from the City of Toronto's Open Data Portal, we found that the median amount of lead in Toronto's drinking water has decreased over the past 11 years. This shows good progress towards eliminating lead from our drinking water entirely."
-format: pdf
+format: 
+  pdf:
+    fig-pos: "H"
 toc: true
 number-sections: true
 bibliography: references.bib
@@ -43,14 +45,14 @@ The data section will discuss the process of retrieving, summarizing, and findin
 
 ## Data
 
-The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. The dataset consisted of 12811 individual water samples. Table 1 below shows a sample of the cleaned dataset.
+The data used in this paper was retrieved from The City of Toronto's Open Data Portal through the library `opendatatoronto` [@rOpenDataToronto]. It was then cleaned and analyzed using R, an open source programming language for statistical computing and data visualization [@citeR] together with the libraries `tidyverse` [@rTidyverse], `dplyr` [@rDplyr], `janitor` [@rJanitor], `knitr` [@rKnitr], and `ggplot2` [@rGgplot2]. The dataset consisted of 12811 individual water samples. @tbl-cleaned-data below shows a sample of the cleaned dataset.
 
 The amount of lead present in water is measured in parts per million (ppm). It is important to note that any higher than 0.005 ppm is not acceptable according to Health Canada. [@leadHealthCanada]
 
 ```{r}
 #| echo: false
 #| message: false
-#| label: table_cleaned_data
+#| label: tbl-cleaned-data
 #| tbl-cap: Sample of cleaned lead concentration data
 
 head(cleaned_lead_sample_data, 5) |>
@@ -63,12 +65,12 @@ head(cleaned_lead_sample_data, 5) |>
 ```
 ### Drinking Water Samples
 
-Each sample has a `Sample ID`, `Date` which it was obtained, and `Lead Amount (ppm)` which is the concentration of lead in that water sample in parts per million (ppm). We are interested in the trend of the lead concentration in relation to the year. We have two tables shown below. Table 2 is the mean lead concentration by year while Table 3 is the median lead concentration by year. We partitioned all the water samples by the year it was obtained and calculated the mean and median value of the lead amount. 
+Each sample has a `Sample ID`, `Date` which it was obtained, and `Lead Amount (ppm)` which is the concentration of lead in that water sample in parts per million (ppm). We are interested in the trend of the lead concentration in relation to the year. We have two tables shown below. @tbl-yearly-mean-lead-ppm is the mean lead concentration by year while @tbl-yearly-median-lead-ppm is the median lead concentration by year. We partitioned all the water samples by the year it was obtained and calculated the mean and median value of the lead amount. 
 
 ```{r}
 #| echo: false
 #| message: false
-#| label: table_yearly_mean_lead_ppm
+#| label: tbl-yearly-mean-lead-ppm
 #| tbl-cap: Mean lead concentration of water samples by year
 
 cleaned_lead_sample_data |>
@@ -86,7 +88,7 @@ cleaned_lead_sample_data |>
 ```{r}
 #| echo: false
 #| message: false
-#| label: table_yearly_median_lead_ppm
+#| label: tbl-yearly-median-lead-ppm
 #| tbl-cap: Median lead concentration of water samples by year
 
 cleaned_lead_sample_data |>
@@ -102,13 +104,13 @@ cleaned_lead_sample_data |>
 ```
 ### Mean vs. Median Lead Concentration by Year
 
-Plotting the mean and median lead concentration by year, we can see that there has not been a significant change in the mean concentration of lead in drinking water since 2014. On the other hand there has been a decreasing trend in the median concentration of lead in drinking water since 2014. Figure 1 does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005. Figure 2 which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is.
+Plotting the mean and median lead concentration by year, we can see that there has not been a significant change in the mean concentration of lead in drinking water since 2014. On the other hand there has been a decreasing trend in the median concentration of lead in drinking water since 2014. @fig-mean-lead-concentration-by-year does not show a significant trend in either direction. This is because of outliers that skew the results. For example, in 2020 the mean concentration was 0.0267115 ppm (More than 5 times the MAC). This was due to a water sample that had a concentration of 8.44 ppm which had a large effect on the mean due to the other values being small numbers such as 0.0005. @fig-median-lead-concentration-by-year which is the median lead concentration by year paints a better overall picture of the water quality in Toronto as the median is not as sensitive to outliers as the mean is.
 
 ```{r}
 #| echo: false
 #| message: false
-#| label: graph_mean_lead_concentration_by_year
-#| tbl-cap: Mean lead concentration of water samples by year
+#| label: fig-mean-lead-concentration-by-year
+#| fig-cap: Mean lead concentration of water samples by year
 
 cleaned_lead_sample_data |>
   mutate(sample_year = year(sample_date)) |>
@@ -123,15 +125,14 @@ cleaned_lead_sample_data |>
   labs(x = "Year", y = "Lead Amount (ppm)") +
   scale_x_continuous(breaks=seq(2014,2024,1)) +
   scale_color_brewer(palette = "Set1") + 
-  labs(caption = "Figure 1: Mean Lead Amount in Toronto's Drinking Water by Year") +
   theme(plot.caption = element_text(hjust=0))
 ```
 
 ```{r}
 #| echo: false
 #| message: false
-#| label: graph_median_lead_concentration_by_year
-#| tbl-cap: Median lead concentration of water samples by year
+#| label: fig-median-lead-concentration-by-year
+#| fig-cap: Median lead concentration of water samples by year
 
 cleaned_lead_sample_data |>
   mutate(sample_year = year(sample_date)) |>
@@ -146,13 +147,12 @@ cleaned_lead_sample_data |>
   labs(x = "Year", y = "Lead Amount (ppm)") +
   scale_x_continuous(breaks=seq(2014,2024,1)) +
   scale_color_brewer(palette = "Set1") +
-  labs(caption = "Figure 2: Median Lead Amount in Toronto's Drinking Water by Year") +
   theme(plot.caption = element_text(hjust=0))
 ```
 
 ### City of Toronto Corrosion Control Program
 
-To prevent the contamination of lead into tap water due to corrosion, the City of Toronto implemented the Corrosion Control Program which aimed to prevent corrosion of pipes and plumbing fixtures by adding phosphate to the drinking water treatment process. [@torontoLeadReport] This took effect in 2014 and Toronto Water estimated that it would take up to 2 years for a protective coating to form inside all pipes. As we can see from Figure 2, the data does not seem to show a decline from the year 2014 to 2015. However, from 2015 to 2016 the median lead concentration decreased from 0.0003255 to 0.0001980 ppm which aligns with the 2 year period in which the phosphate protective coating needed to form. Since then, the median lead amount of a particular year never reached as high as 2014 levels. From the data, there is evidence to support the fact that the implementation of the Corrosion Control Program had a noticeable impact on the water quality in Toronto.
+To prevent the contamination of lead into tap water due to corrosion, the City of Toronto implemented the Corrosion Control Program which aimed to prevent corrosion of pipes and plumbing fixtures by adding phosphate to the drinking water treatment process. [@torontoLeadReport] This took effect in 2014 and Toronto Water estimated that it would take up to 2 years for a protective coating to form inside all pipes. As we can see from @fig-median-lead-concentration-by-year, the data does not seem to show a decline from the year 2014 to 2015. However, from 2015 to 2016 the median lead concentration decreased from 0.0003255 to 0.0001980 ppm which aligns with the 2 year period in which the phosphate protective coating needed to form. Since then, the median lead amount of a particular year never reached as high as 2014 levels. From the data, there is evidence to support the fact that the implementation of the Corrosion Control Program had a noticeable impact on the water quality in Toronto.
 
 ### Regulated vs. Non Regulated Testing
 
